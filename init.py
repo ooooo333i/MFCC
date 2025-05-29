@@ -4,7 +4,7 @@ import librosa
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import accuracy_score
 
-def extract_mfcc(file_path, n_mfcc=5):
+def MFCC(file_path, n_mfcc=5):
     y, sr = librosa.load(file_path, sr=16000)
     mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
     return mfcc.T
@@ -13,12 +13,12 @@ def load_files(file_names, data_dir):
     features = []
     for name in file_names:
         path = os.path.join(data_dir, f'{name}.wav')
-        mfcc = extract_mfcc(path)
+        mfcc = MFCC(path)
         features.append(mfcc)
     return np.vstack(features)
 
 def predict(file_path, male_gmm, female_gmm):
-    mfcc = extract_mfcc(file_path)
+    mfcc = MFCC(file_path)
     male_score = male_gmm.score(mfcc)
     female_score = female_gmm.score(mfcc)
     return 'male' if male_score > female_score else 'female'
