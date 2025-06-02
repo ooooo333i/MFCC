@@ -1,5 +1,5 @@
 import librosa
-import librosa.display
+#import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
@@ -21,17 +21,16 @@ for i in range(1,6):
     plt.title(f'FeMale {i}')
     librosa.display.specshow(female_mfcc)
 """
-
 x = []
 y = []
+# path "./data/{  }"
 for i in range(1,6):
     x.append(MFCC(f'./data/m{i}.wav'))
     y.extend([0]*len(MFCC(f'./data/m{i}.wav')))#male
-
     x.append(MFCC(f'./data/f{i}.wav'))
     y.extend([1]*len(MFCC(f'./data/f{i}.wav')))#female
 
-x = np.vstack(x) # 배열로
+x = np.vstack(x) # to array
 y = np.array(y)
 
 #print(x.shape)
@@ -58,7 +57,8 @@ for i, (train_i, test_i) in enumerate(skf.split(x, y)):
     acc = np.mean(y_pred == y_test) * 100
     accurate.append(acc)
 
-    print(f"{i} acc: {acc:.2f}")
+    print(f"{i+1} acc: {acc:.2f}")
 
 print(f"Mean Accuracy:{np.mean(accurate):.2f}, Standard Deviation: {np.std(accurate):.2f}")
+
 #plt.show()
