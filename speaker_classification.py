@@ -26,9 +26,9 @@ y = []
 # path "./data/{  }"
 for i in range(1,6):
     x.append(MFCC(f'./data/m{i}.wav'))
-    y.extend([0]*len(MFCC(f'./data/m{i}.wav')))#male
+    y.extend([i]*len(MFCC(f'./data/m{i}.wav')))#male 1~5 
     x.append(MFCC(f'./data/f{i}.wav'))
-    y.extend([1]*len(MFCC(f'./data/f{i}.wav')))#female
+    y.extend([i+5]*len(MFCC(f'./data/f{i}.wav')))#female 6~10
 
 x = np.vstack(x) # to array
 y = np.array(y)
@@ -44,20 +44,28 @@ for i, (train_i, test_i) in enumerate(skf.split(x, y)):
     x_train, x_test = x[train_i], x[test_i]
     y_train, y_test = y[train_i], y[test_i]
 
-    gmm_male = GaussianMixture(n_components=4, covariance_type='full', random_state=5)
-    gmm_female = GaussianMixture(n_components=4, covariance_type='full', random_state=5)
+    gmms = {}
 
-    gmm_male.fit(x_train[y_train == 0])
-    gmm_female.fit(x_train[y_train == 1])
+    for j in range(1,11):
+        gmm = GaussianMixture(n_components=4, covariance_type='full', random_state=5)
+        gmm.fit(x_train[y_train == j])
+        gmms[j] = gmm
 
-    score_m = gmm_male.score_samples(x_test)
-    score_f = gmm_female.score_samples(x_test)
+    y_pred = []
 
-    y_pred = (score_f > score_m).astype(int)
-    acc = np.mean(y_pred == y_test) * 100
-    accurate.append(acc)
-
+    for test in x_test:
+        scores = []
+        for id in range(1,11):
+            score = gmms[id].score([test])
+            ##print(score)
+            scores.append(score)
+        ##print(scores)
+        predict = np.argmax(scores) + 1  ## 인덱스 보정
+        y_pred.append(predict)
+        
+    acc = np.mean(np.array(y_pred) == y_test) * 100
     print(f"{i+1} acc: {acc:.2f}")
+    accurate.append(acc)
 
 print(f"Mean Accuracy:{np.mean(accurate):.2f}, Standard Deviation: {np.std(accurate):.2f}")
 

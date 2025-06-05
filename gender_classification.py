@@ -52,6 +52,7 @@ for i, (train_i, test_i) in enumerate(skf.split(x, y)):
 
     score_m = gmm_male.score_samples(x_test)
     score_f = gmm_female.score_samples(x_test)
+    
 
     y_pred = (score_f > score_m).astype(int)
     acc = np.mean(y_pred == y_test) * 100
