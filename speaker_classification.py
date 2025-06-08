@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from sklearn.mixture import GaussianMixture
+import time
 
 def MFCC(data):
     y ,sr = librosa.load(data,sr=16000)
@@ -21,6 +22,7 @@ for i in range(1,6):
     plt.title(f'FeMale {i}')
     librosa.display.specshow(female_mfcc)
 """
+start_time = time.time()
 x = []
 y = []
 # path "./data/{  }"
@@ -47,7 +49,7 @@ for i, (train_i, test_i) in enumerate(skf.split(x, y)):
     gmms = {}
 
     for j in range(1,11):
-        gmm = GaussianMixture(n_components=4, covariance_type='full', random_state=5)
+        gmm = GaussianMixture(n_components=6, covariance_type='full', random_state=5)
         gmm.fit(x_train[y_train == j])
         gmms[j] = gmm
 
@@ -69,4 +71,8 @@ for i, (train_i, test_i) in enumerate(skf.split(x, y)):
 
 print(f"Mean Accuracy:{np.mean(accurate):.2f}, Standard Deviation: {np.std(accurate):.2f}")
 
+
+end_time = time.time()  # 종료 시간 기록
+elapsed_time = end_time - start_time
+print(f"Total Execution Time: {elapsed_time:.2f} seconds")
 #plt.show()
