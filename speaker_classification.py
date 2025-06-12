@@ -22,6 +22,7 @@ for i in range(1,6):
     plt.title(f'FeMale {i}')
     librosa.display.specshow(female_mfcc)
 """
+
 start_time = time.time()
 x = []
 y = []
@@ -45,23 +46,24 @@ accurate = []
 for i, (train_i, test_i) in enumerate(skf.split(x, y)):
     x_train, x_test = x[train_i], x[test_i]
     y_train, y_test = y[train_i], y[test_i]
-
+    
     gmms = {}
 
     for j in range(1,11):
-        gmm = GaussianMixture(n_components=6, covariance_type='full', random_state=5)
+        gmm = GaussianMixture(n_components=4, covariance_type='full', random_state=5)
         gmm.fit(x_train[y_train == j])
         gmms[j] = gmm
 
     y_pred = []
 
     for test in x_test:
+
         scores = []
         for id in range(1,11):
             score = gmms[id].score([test])
             ##print(score)
             scores.append(score)
-        ##print(scores)
+        #print(scores)
         predict = np.argmax(scores) + 1  ## 인덱스 보정
         y_pred.append(predict)
         
